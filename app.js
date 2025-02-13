@@ -1,19 +1,16 @@
-require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
 const app = express();
+
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+
 app.use(express.json());
 
-const db = process.env.MONGO_URI;
-// Open route
-app.get("/", (req, res) => {
-  res.status(200).json({ msg: "Hello, World!" });
+app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
+
+app.get("/home", (req, res) => {
+  res.status(200).json({ msg: "Bem-vindo à API!" });
 });
 
-mongoose.connect(db).then(() => {
-  app.listen(4000);
-  console.log("MongoDB Connected...");
-});
+module.exports = app;
