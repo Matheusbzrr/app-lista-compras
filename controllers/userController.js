@@ -98,12 +98,20 @@ exports.deleteShoppingListItem = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
 
+    const itemExists = user.shoppingList.some(
+      (item) => item._id.toString() === itemId
+    );
+    if (!itemExists) {
+      return res
+        .status(404)
+        .json({ msg: "Produto não encontrado na lista de compras!" });
+    }
+
     user.shoppingList = user.shoppingList.filter(
       (item) => item._id.toString() !== itemId
     );
     await user.save();
-
-    res.status(200).json({ msg: "Produto removido da lista de compras!" });
+    res.status(200).json({ msg: "Item removido da lista de compras!" });
   } catch (err) {
     res.status(500).json({ msg: "Erro no servidor", error: err.message });
   }
