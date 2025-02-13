@@ -20,6 +20,10 @@ exports.addToShoppingList = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
 
+    if (!name || !quantity || quantity < 0) {
+      return res.status(422).json({ msg: "Preencha corretamente a lista" });
+    }
+
     user.shoppingList.push({ name, quantity });
     await user.save();
 
@@ -73,7 +77,11 @@ exports.updateShoppingListItem = async (req, res) => {
     if (!item) return res.status(404).json({ msg: "Item não encontrado!" });
 
     if (name) item.name = name;
-    if (quantity) item.quantity = quantity;
+    if (quantity && quantity < 0) {
+      return res.status(422).json({ msg: "Preencha corretamente a lista" });
+    } else {
+      item.quantity = quantity;
+    }
 
     await user.save();
     res.status(200).json({ msg: "Produto atualizado na lista de compras!" });
