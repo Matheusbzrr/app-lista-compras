@@ -18,13 +18,6 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-  shoppingList: [
-    {
-      name: { type: String, required: true },
-      quantity: { type: Number, required: true },
-      purchased: { type: Boolean, default: false },
-    },
-  ],
 });
 
 module.exports = mongoose.model("User", UserSchema);
