@@ -5,7 +5,7 @@ const app = express();
 const authRoutes = require("./src/routes/authRoutes");
 
 const corsOptions = {
-  origin: "https://front-gold-sigma.vercel.app",
+  origin: "https://front-gold-sigma.vercel.app/",
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type",
 };
