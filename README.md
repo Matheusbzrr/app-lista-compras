@@ -31,7 +31,7 @@ Antes de rodar a aplicação, é necessário ter instalado:
 1. **Clone o repositório**:
 
    ```bash
-   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   git clone https://github.com/Matheusbzrr/app-lista-compras.git
    cd nome-do-repositorio
    ```
 
