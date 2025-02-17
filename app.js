@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./src/routes/authRoutes");
 
 const corsOptions = {
   origin: "https://front-gold-sigma.vercel.app",
