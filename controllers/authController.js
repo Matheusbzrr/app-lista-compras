@@ -1,56 +1,44 @@
-const User = require("../model/usersModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const {
+  registerUser,
+  loginUser,
+  getUserById,
+} = require("../services/userService");
+const { userRegisterSchema, userLoginSchema } = require("../dtos/userDto");
+const validate = require("../middlewares/validateMiddleware");
 
-exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+exports.register = [
+  validate(userRegisterSchema),
+  async (req, res) => {
+    try {
+      const { name, email, password } = req.body;
+      const result = await registerUser(name, email, password);
+      res.status(201).json(result);
+    } catch (err) {
+      res.status(422).json({ msg: err.message });
+    }
+  },
+];
 
-  if (!name || !email || !password) {
-    return res.status(422).json({ msg: "Dados inválidos!" });
-  }
+exports.login = [
+  validate(userLoginSchema),
+  async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const result = await loginUser(email, password);
+      res.status(200).json(result);
+    } catch (err) {
+      res.status(422).json({ msg: err.message });
+    }
+  },
+];
 
-  const userExists = await User.findOne({ email });
-  if (userExists) return res.status(422).json({ msg: "E-mail já cadastrado!" });
-
-  const salt = await bcrypt.genSalt(12);
-  const passwordHash = await bcrypt.hash(password, salt);
-
-  const user = new User({ name, email, password: passwordHash });
-
-  try {
-    await user.save();
-    res.status(201).json({ msg: "Usuário criado com sucesso!" });
-  } catch (err) {
-    res.status(500).json({ msg: "Erro no servidor" });
-  }
-};
-
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
-
-  const checkPassword = await bcrypt.compare(password, user.password);
-  if (!checkPassword) return res.status(422).json({ msg: "Senha inválida!" });
-
-  const secret = process.env.SECRET;
-  const token = jwt.sign({ id: user._id }, secret);
-
-  try {
-    res
-      .status(200)
-      .json({ msg: "Autenticado com sucesso!", token, userId: user._id });
-  } catch (err) {
-    res.status(500).json({ msg: "Erro no servidor" });
-  }
-};
+const userService = require("../services/userService");
 
 exports.getUserById = async (req, res) => {
-  const id = req.params.id;
-
-  const user = await User.findById(id, "-password");
-  if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
-
-  res.status(200).json({ user });
+  try {
+    const user = await userService.getUserById(req.userId); // Usa o ID injetado pelo checkToken no token
+    res.status(200).json({ user });
+  } catch (err) {
+    res.status(404).json({ msg: err.message });
+  }
 };
