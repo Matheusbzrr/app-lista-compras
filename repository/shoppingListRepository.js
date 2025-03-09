@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const ShoppingList = require("../model/shoppingList");
 
 class ShoppingListRepository {
+  //criar
   async create(data) {
     const shoppingList = new ShoppingList({
       userId: data.userId,
@@ -12,23 +13,29 @@ class ShoppingListRepository {
     return await shoppingList.save();
   }
 
-  async update(userId, items) {
-    return await ShoppingList.findOneAndUpdate(
-      { userId },
-      { $set: { items } },
-      { new: true }
-    );
+  // atualizar itens da lista
+  async bulkWrite(operations) {
+    try {
+      const result = await ShoppingList.bulkWrite(operations);
+      return result;
+    } catch (error) {
+      console.error("Erro ao realizar bulkWrite:", error);
+      throw error;
+    }
   }
 
   async findByUserId(userId, offset = 0, limit = 10) {
     return await ShoppingList.find({ userId }).skip(offset).limit(limit).exec();
   }
 
-  async delete(userId) {
+  async findList(listId) {
+    return await ShoppingList.findById(listId);
+  }
+  async delete(id) {
     return await ShoppingList.findOneAndDelete({
-      userId: userId,
+      id: id,
     });
   }
 }
 
-module.exports = new ShoppingListRepository();
+module.exports = ShoppingListRepository;

@@ -1,13 +1,34 @@
 const express = require("express");
 const router = express.Router();
-const shoppingController = require("../controllers/shoppingController");
+const ShoppingListController = require("../controllers/shoppingController");
+const ShoppingListService = require("../services/shoppingListService");
+const ShoppingListRepository = require("../repository/shoppingListRepository");
 const checkToken = require("../middlewares/checkToken");
 
-// Criar um item na lista de compras
-router.post("/create", checkToken, shoppingController.createShoppingList);
-router.get("/search", checkToken, shoppingController.getShoppingListsByIdUser);
+const shoppingListRepository = new ShoppingListRepository();
+const shoppingListService = new ShoppingListService(shoppingListRepository);
+const shoppingListController = new ShoppingListController(shoppingListService);
 
-// Listar todos os itens do usuário autenticado
-// router.get("/", checkToken, shoppingController.getShoppingList);
+// Criar um item na lista de compras
+router.post(
+  "/create",
+  checkToken,
+  shoppingListController.createShoppingList.bind(shoppingListController)
+);
+router.get(
+  "/search",
+  checkToken,
+  shoppingListController.getShoppingListsByIdUser.bind(shoppingListController)
+);
+router.put(
+  "/update/:id",
+  checkToken,
+  shoppingListController.updateShoppingList.bind(shoppingListController)
+);
+router.delete(
+  "/delete/:id",
+  checkToken,
+  shoppingListController.deleteShoppingListByIdUser.bind(shoppingListController)
+);
 
 module.exports = router;
