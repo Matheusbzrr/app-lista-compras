@@ -28,7 +28,13 @@ router.put(
 router.delete(
   "/delete/:id",
   checkToken,
-  shoppingListController.deleteShoppingListByIdUser.bind(shoppingListController)
+  shoppingListController.deleteShoppingListByListId.bind(shoppingListController)
+);
+
+router.delete(
+  "/item/:id",
+  checkToken,
+  shoppingListController.deleteItemInListById.bind(shoppingListController)
 );
 
 module.exports = router;

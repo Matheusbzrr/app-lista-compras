@@ -1,7 +1,7 @@
 const {
   ShoppingListSchemaDTO,
   UpdateShoppingItemsDTO,
-  ZodError
+  ZodError,
 } = require("../dtos/shoppingListDto");
 
 class ShoppingListController {
@@ -12,9 +12,6 @@ class ShoppingListController {
     try {
       const userId = req.userId; // Pegando userId do token JWT
       const data = req.body; // Pegando os itens do body
-
-      const totalPriceList =
-        typeof data.totalPriceList === "number" ? data.totalPriceList : 0;
 
       const validatedData = ShoppingListSchemaDTO.parse({
         userId,
@@ -82,7 +79,7 @@ class ShoppingListController {
     }
   }
 
-  async deleteShoppingListByIdUser(req, res) {
+  async deleteShoppingListByListId(req, res) {
     try {
       const userId = req.userId; // Pegando userId do token JWT
       const listId = req.params.id; // Pegando o id da lista de compras
@@ -91,6 +88,20 @@ class ShoppingListController {
     } catch (err) {
       res.status(500).json({
         msg: "Erro ao deletar a lista de compras",
+        error: err.message,
+      });
+    }
+  }
+
+  async deleteItemInListById(req, res) {
+    try {
+      const listId = req.params.id; // Pegando o id da lista de compras
+      const { itemId } = req.body; // Pegando o id do item
+      await this.service.deleteItemInList(listId, itemId);
+      res.status(204).send();
+    } catch (err) {
+      res.status(500).json({
+        msg: "Erro ao deletar o item da lista de compras",
         error: err.message,
       });
     }

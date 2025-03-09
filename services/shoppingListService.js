@@ -93,7 +93,7 @@ class ShoppingListService {
 
       // Se houver operações de update, faz a atualização em massa
       if (updateOperations.length > 0) {
-        // Calcula o novo preço total da lista começando do zero, como passado no segundo parametro
+        // Calcula o novo preço total da lista começando do zero
         const newTotalPriceList = list.items.reduce((total, item) => {
           const updatedItem = updatedItemsMap.get(String(item._id));
           // Usa o valor atualizado se existir, caso contrário, usa o valor original
@@ -124,8 +124,32 @@ class ShoppingListService {
     }
   }
 
-  async deleteShoppingList(id) {
-    return await this.repository.delete(id);
+  async deleteShoppingList(userId, listId) {
+    try {
+      const list = await this.repository.findList(listId);
+      if (!list) {
+        throw new Error("Lista não encontrada");
+      }
+      if (String(list.userId) !== userId) {
+        throw new Error("Não autorizado");
+      }
+
+      console.log(typeof listId);
+
+      return await this.repository.deleteList(listId);
+    } catch (error) {
+      console.error("Erro ao excluir lista:", error);
+      throw error;
+    }
+  }
+
+  async deleteItemInList(listId, itemId) {
+    try {
+      await this.repository.deleteItemFromList(listId, itemId);
+    } catch (err) {
+      console.error("Erro ao excluir item da lista:", err);
+      throw err;
+    }
   }
 }
 

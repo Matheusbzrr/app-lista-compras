@@ -31,10 +31,17 @@ class ShoppingListRepository {
   async findList(listId) {
     return await ShoppingList.findById(listId);
   }
-  async delete(id) {
-    return await ShoppingList.findOneAndDelete({
-      id: id,
-    });
+  async deleteList(listId) {
+    return await ShoppingList.deleteOne({
+      _id: listId,
+    }).exec();
+  }
+
+  async deleteItemFromList(listId, itemId) {
+    return await ShoppingList.updateOne(
+      { _id: listId }, // Encontra a lista específica
+      { $pull: { items: { _id: itemId } } } // Remove o item do array 'items'
+    ).exec();
   }
 }
 
