@@ -1,44 +1,55 @@
-const {
-  registerUser,
-  loginUser,
-  getUserById,
-} = require("../services/userService");
-const { userRegisterSchema, userLoginSchema } = require("../dtos/userDto");
-const validate = require("../middlewares/validateMiddleware");
+const UserService = require("../services/userService");
+const UserDto = require("../dtos/userDto");
+const { z } = require("zod");
 
-exports.register = [
-  validate(userRegisterSchema),
-  async (req, res) => {
-    try {
-      const { name, email, password } = req.body;
-      const result = await registerUser(name, email, password);
-      res.status(201).json(result);
-    } catch (err) {
-      res.status(422).json({ msg: err.message });
-    }
-  },
-];
-
-exports.login = [
-  validate(userLoginSchema),
-  async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const result = await loginUser(email, password);
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(422).json({ msg: err.message });
-    }
-  },
-];
-
-const userService = require("../services/userService");
-
-exports.getUserById = async (req, res) => {
+const register = async (req, res) => {
+  if (!req.body){
+    return res.status(400).json({ msg: 'Preencha os dados corretamente' });
+  }
+  
   try {
-    const user = await userService.getUserById(req.userId); // Usa o ID injetado pelo checkToken no token
-    res.status(200).json({ user });
-  } catch (err) {
-    res.status(404).json({ msg: err.message });
+      const validatedData = UserDto.userRegisterDTO.parse(req.body);
+      const result = await UserService.registerUser(validatedData);
+      res.status(201).json(result);
+  } catch (error) {
+   
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        message: "Erro de validação dos dados",
+        errors: error.errors, 
+      });
+    }
+
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
   }
 };
+
+const login = async (req, res) => {
+  if (!req.body){
+    return res.status(400).json({ msg: 'Preencha os dados corretamente' });
+  }  
+  
+  try {
+      const validatedData = UserDto.userLoginDTO.parse(req.body);
+      const result = await loginUser(validatedData.email, validatedData.password);
+      res.status(200).json(result);
+    } catch (error) {
+   
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({
+          message: "Erro de validação dos dados",
+          errors: error.errors, 
+        });
+      }
+  
+      if (error.status) {
+        return res.status(error.status).json({ message: error.message });
+      }
+      return res.status(500).json({ message: error.message });
+    }
+  };
+
+module.exports = { register, login };

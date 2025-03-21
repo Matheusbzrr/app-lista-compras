@@ -1,29 +1,25 @@
 const express = require("express");
 const router = express.Router();
-const ShoppingListController = require("../controllers/shoppingController");
-const ShoppingListService = require("../services/shoppingListService");
-const ShoppingListRepository = require("../repository/shoppingListRepository");
+const shoppingListController = require("../controllers/shoppingController");
+
 const checkToken = require("../middlewares/checkToken");
 
-const shoppingListRepository = new ShoppingListRepository();
-const shoppingListService = new ShoppingListService(shoppingListRepository);
-const shoppingListController = new ShoppingListController(shoppingListService);
 
 // Criar um item na lista de compras
 router.post(
   "/create",
   checkToken,
-  shoppingListController.createShoppingList.bind(shoppingListController)
+  shoppingListController.createShoppingList
 );
 router.get(
   "/search",
   checkToken,
-  shoppingListController.getShoppingListsByIdUser.bind(shoppingListController)
+  shoppingListController.getShoppingListsByIdUser
 );
 router.put(
   "/update/:id",
   checkToken,
-  shoppingListController.updateShoppingList.bind(shoppingListController)
+  shoppingListController.updateShoppingList
 );
 router.delete(
   "/delete/:id",

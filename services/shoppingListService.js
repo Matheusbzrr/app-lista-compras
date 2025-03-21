@@ -1,9 +1,6 @@
-class ShoppingListService {
-  constructor(shoppingListRepository) {
-    this.repository = shoppingListRepository;
-  }
+const ShoppingListRepository = require("../repository/shoppingListRepository");
 
-  async createShoppingList(data) {
+const createShoppingList =  async (data) => {
     if (!data.totalPriceList) {
       // Calcula o valor de cada item da lista e atribui ao preço total da lista
       data.totalPriceList = data.items.reduce(
@@ -12,56 +9,64 @@ class ShoppingListService {
       );
     }
 
-    return await this.repository.create(data);
-  }
+    return await ShoppingListRepository.create(data);
+};
 
-  async getShoppingListsByUserId(userId, page = 0, limit = 10) {
-    try {
+const getAllListByUserId = async (userId) => {
+      const page = 0; // Página solicitada
+      const limit = 10; // Limite de itens por página
       const offset = page * limit; // Calcula o offset baseado na página solicitada
-      const shoppingList = await this.repository.findByUserId(
+      const shoppingList = await ShoppingListRepository.findByUserId(
         userId,
         offset,
         limit
       );
 
-      const formatResponseByUserId = shoppingList.map((list) => ({
-        listId: list._id,
-        items: list.items.map((item) => ({
-          itemId: item._id,
-          nameItem: item.nameItem,
-          amountItem: item.amountItem,
-          measurementUnit: item.measurementUnit,
-          priceItem: item.priceItem,
-          totalPriceItems: item.totalPriceItems,
-        })),
-        createdDate: list.createdAt,
-        totalPriceList: list.totalPriceList,
-      }));
+      if (!shoppingList) {
+        throw {status: 404, message: "Nenhuma Lista encontrada"};
+      }
 
-      return formatResponseByUserId;
-    } catch (err) {
-      console.error("Erro ao buscar listas de compras: ", err);
+
+      // avaliar dps o uso desse map pra formatar a resposta ou se eu so passo um dto no controller
+
+      // const formatList = shoppingList.map((list) => ({
+      //   listId: list._id,
+      //   items: list.items.map((item) => ({
+      //     itemId: item._id,
+      //     nameItem: item.nameItem,
+      //     amountItem: item.amountItem,
+      //     measurementUnit: item.measurementUnit,
+      //     priceItem: item.priceItem,
+      //     totalPriceItems: item.totalPriceItems,
+      //   })),
+      //   createdDate: list.createdAt,
+      //   totalPriceList: list.totalPriceList,
+      // }));
+
+      return shoppingList;
+};
+
+const getShoppingListByIdList =  async (idList) => {
+    const allList = await ShoppingListRepository.findList(idList);
+    if (!allList) {
+      throw {status: 404, message: "Lista não encontrada"};
     }
 
-    return;
-  }
+    return allList;
 
-  async getShoppingListByIdList(id) {
-    return await this.repository.findByUserId(id);
-  }
+};
 
-  async updateItemPrices(userId, listId, items) {
-    try {
+const updateItemPrices =  async (userId, listId, items) => {
       // Busca a lista
-      const list = await this.repository.findList(listId);
+      const list = await ShoppingListRepository.findList(listId);
 
       if (!list) {
-        throw new Error("Lista não encontrada");
+        throw {status: 404, message: "Lista não encontrada"};
       }
 
       // Verifica se o userId da lista corresponde ao userId recebido
       if (String(list.userId) !== userId) {
-        throw new Error("Não autorizado");
+        throw {status: 401, message: "Não autorizado"};
       }
 
       const updatedItemsMap = new Map(
@@ -110,7 +115,7 @@ class ShoppingListService {
             update: { $set: { totalPriceList: newTotalPriceList } },
           },
         });
-        const result = await this.repository.bulkWrite(updateOperations);
+        const result = await ShoppingListRepository.bulkWrite(updateOperations);
 
         console.log(`Itens atualizados: ${result.modifiedCount}`);
         console.log(`Preço total atualizado para: ${newTotalPriceList}`);
@@ -118,39 +123,30 @@ class ShoppingListService {
       } else {
         console.log("Nenhuma atualização necessária.");
       }
-    } catch (error) {
-      console.error("Erro ao atualizar preços:", error);
-      throw error;
-    }
-  }
+    
+};
 
-  async deleteShoppingList(userId, listId) {
-    try {
-      const list = await this.repository.findList(listId);
+const deleteShoppingList =  async (userId, listId) => {
+      const list = await ShoppingListRepository.findList(listId);
       if (!list) {
-        throw new Error("Lista não encontrada");
+        throw {status: 404, message: "Lista não encontrada"};
       }
       if (String(list.userId) !== userId) {
-        throw new Error("Não autorizado");
+        throw {status: 401, message: "Não autorizado"};
       }
 
       console.log(typeof listId);
 
-      return await this.repository.deleteList(listId);
-    } catch (error) {
-      console.error("Erro ao excluir lista:", error);
-      throw error;
-    }
-  }
+      return await ShoppingListRepository.deleteList(listId);
+};
 
-  async deleteItemInList(listId, itemId) {
-    try {
-      await this.repository.deleteItemFromList(listId, itemId);
-    } catch (err) {
-      console.error("Erro ao excluir item da lista:", err);
-      throw err;
-    }
+const deleteItemInList = async (listId, itemId) => {
+  const list = await ShoppingListRepository.deleteItemFromList(listId, itemId);
+  if (!list) {
+    throw {status: 404, message: "Item não encontrado"};
   }
-}
+  return list;
+};
 
-module.exports = ShoppingListService;
+
+module.exports = {createShoppingList, getAllListByUserId, getShoppingListByIdList, updateItemPrices, deleteShoppingList, deleteItemInList};

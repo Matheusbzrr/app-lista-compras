@@ -5,9 +5,9 @@ const ItemSchema = new mongoose.Schema({
   // cada item tem seu proprio id que pode ser acessado data.id
   nameItem: { type: String, required: true },
   amountItem: { type: Number, required: true },
-  measurementUnit: { type: String, enum: ["un", "kg", "g"], required: true },
+  measurementUnit: { type: String, enum: ["Un", "Kg", "g", "L"], required: true },
   totalPriceItems: { type: Number, default: 0 },
-  isActive: { type: Boolean, default: true },
+  isActive: { type: Boolean, default: true }
 });
 
 // estrutura de relação com o usuario
@@ -17,6 +17,7 @@ const ShoppingListSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   totalPriceList: { type: Number, default: 0 },
 });
+
 
 // junta tudo antes de exportar
 const ShoppingList = mongoose.model("ShoppingList", ShoppingListSchema);

@@ -1,9 +1,6 @@
-const mongoose = require("mongoose");
 const ShoppingList = require("../model/shoppingList");
 
-class ShoppingListRepository {
-  //criar
-  async create(data) {
+const create = async (data) => {
     const shoppingList = new ShoppingList({
       userId: data.userId,
       items: data.items,
@@ -11,38 +8,33 @@ class ShoppingListRepository {
     });
 
     return await shoppingList.save();
-  }
+};
 
   // atualizar itens da lista
-  async bulkWrite(operations) {
-    try {
+const bulkWrite = async (operations) => {  
       const result = await ShoppingList.bulkWrite(operations);
       return result;
-    } catch (error) {
-      console.error("Erro ao realizar bulkWrite:", error);
-      throw error;
-    }
-  }
+};
 
-  async findByUserId(userId, offset = 0, limit = 10) {
+const findByUserId = async (userId, offset, limit) => {
     return await ShoppingList.find({ userId }).skip(offset).limit(limit).exec();
-  }
+};
 
-  async findList(listId) {
+const findList = async (listId) => {
     return await ShoppingList.findById(listId);
-  }
-  async deleteList(listId) {
+};
+const deleteList = async (listId) => {
     return await ShoppingList.deleteOne({
       _id: listId,
     }).exec();
-  }
+};
 
-  async deleteItemFromList(listId, itemId) {
+const deleteItemFromList = async (listId, itemId) => {
     return await ShoppingList.updateOne(
       { _id: listId }, // Encontra a lista específica
       { $pull: { items: { _id: itemId } } } // Remove o item do array 'items'
     ).exec();
-  }
-}
+};
 
-module.exports = ShoppingListRepository;
+
+module.exports = { create, findByUserId, findList, deleteList, deleteItemFromList, bulkWrite };
