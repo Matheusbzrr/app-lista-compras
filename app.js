@@ -18,8 +18,4 @@ app.use("/auth", authRoutes);
 
 app.use("/shopping", shopping);
 
-app.get("/home", (req, res) => {
-  res.status(200).json({ msg: "Bem-vindo à API!" });
-});
-
 module.exports = app;

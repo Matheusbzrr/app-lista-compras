@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const shoppingListController = require("../controllers/shoppingController");
-
 const checkToken = require("../middlewares/checkToken");
 
 
@@ -14,7 +13,7 @@ router.post(
 router.get(
   "/search",
   checkToken,
-  shoppingListController.getShoppingListsByIdUser
+  shoppingListController.getAllShoppingListsByIdUser
 );
 router.put(
   "/update/:id",

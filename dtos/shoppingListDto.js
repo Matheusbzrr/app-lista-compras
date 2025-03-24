@@ -1,6 +1,5 @@
 const { z } = require("zod");
 
-
 const MeasurementUnitEnum = z.enum(["Un", "Kg", "g", "L"]);
 
 const shoppingListSchemaDTO = z.object({
@@ -12,34 +11,39 @@ const shoppingListSchemaDTO = z.object({
         .number()
         .positive("A quantidade deve ser um número positivo"),
       measurementUnit: MeasurementUnitEnum,
-      totalPriceItems: z.number().optional().default(0),
-      isActive: z.boolean().default(true),
     })
   ),
-  totalPriceList: z.number().optional().default(0),
 });
 
-const updateShoppingItemsDTO = z.array(
+const responseShoppingListDto = z.array(
   z.object({
-    itemId: z.string(),
-    nameItem: z.string().optional(),
-    amountItem: z.number().optional(),
-    measurementUnit: MeasurementUnitEnum.optional(),
-    totalPriceItems: z
-      .number()
-      .optional()
-      .default(0)
-      .refine(
-        (value) => value === undefined || value >= 0, // Validação personalizada
-        {
-          message: "priceItem deve ser um número positivo", // Mensagem de erro
-        }
-      ),
-    isActive: z.boolean().optional(),
+    listId: z.string(),
+    items: z.array(
+      z.object({
+        itemId: z.string(),
+        nameItem: z.string(),
+        amountItem: z.number(),
+        measurementUnit: MeasurementUnitEnum,
+      })
+    ),
+    createdAt: z.date(),
   })
 );
+
+const updateShoppingItemsDTO = z.object({
+  items: z.array(
+    z.object({
+      itemId: z.string(),
+      nameItem: z.string(),
+      amountItem: z.number(),
+      measurementUnit: z.string(),
+    })
+  ),
+});
+
 // Exportando para usar no Controller ou Service
 module.exports = {
   shoppingListSchemaDTO,
   updateShoppingItemsDTO,
+  responseShoppingListDto,
 };
