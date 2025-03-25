@@ -65,7 +65,9 @@ const updateShoppingList = async (req, res) => {
     const listId = req.params.id; // Pegando o id da lista de compras
 
     // Valida os dados de entrada com DTO
-    const validatedData = ShoppingListDto.updateShoppingItemsDTO.parse(req.body);
+    const validatedData = ShoppingListDto.updateShoppingItemsDTO.parse(
+      req.body
+    );
 
     // Chama o service para atualizar os itens
     await ShoppingListService.updateList(listId, validatedData);

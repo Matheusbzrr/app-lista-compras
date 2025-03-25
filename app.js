@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const authRoutes = require("./routes/authRoutes");
-const shopping = require("./routes/shoppingRoutes");
+const authRoutes = require("./src/routes/authRoutes");
+const shopping = require("./src/routes/shoppingRoutes");
 
 const corsOptions = {
   origin: "http://127.0.0.1:5501",

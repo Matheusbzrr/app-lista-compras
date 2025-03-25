@@ -12,18 +12,17 @@ const create = async (data) => {
 const updateItem = async (data) => {
   // Atualizar o item dentro do array de `items`
   return await ShoppingList.findByIdAndUpdate(
-    data.listId, 
+    data.listId,
     {
       $set: {
-        
-        "items.$[elem].nameItem": data.item.nameItem, 
-        "items.$[elem].amountItem": data.item.amountItem, 
-        "items.$[elem].measurementUnit": data.item.measurementUnit, 
+        "items.$[elem].nameItem": data.item.nameItem,
+        "items.$[elem].amountItem": data.item.amountItem,
+        "items.$[elem].measurementUnit": data.item.measurementUnit,
       },
     },
     {
-      new: true, 
-      arrayFilters: [{ "elem.itemId": data.itemId }], 
+      new: true,
+      arrayFilters: [{ "elem.itemId": data.itemId }],
     }
   ).exec();
 };
