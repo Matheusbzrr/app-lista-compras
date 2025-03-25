@@ -2,12 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-<<<<<<< HEAD
-const authRoutes = require("./src/routes/authRoutes");
-=======
 const authRoutes = require("./routes/authRoutes");
 const shopping = require("./routes/shoppingRoutes");
->>>>>>> refatorando
 
 // CORS options
 const corsOptions = {
