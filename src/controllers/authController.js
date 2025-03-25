@@ -1,56 +1,70 @@
-const User = require("../model/usersModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const UserService = require("../services/userService");
+const UserDto = require("../dtos/userDto");
+const { z } = require("zod");
 
-exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
-
-  if (!name || !email || !password) {
-    return res.status(422).json({ msg: "Dados inválidos!" });
+const register = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ msg: "Preencha os dados corretamente" });
   }
+  try {
+    const validatedData = UserDto.userRegisterDTO.parse(req.body);
+    const result = await UserService.registerUser(validatedData);
+    res.status(201).json(result);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        message: "Erro de validação dos dados",
+        errors: error.errors,
+      });
+    }
 
-  const userExists = await User.findOne({ email });
-  if (userExists) return res.status(422).json({ msg: "E-mail já cadastrado!" });
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-  const salt = await bcrypt.genSalt(12);
-  const passwordHash = await bcrypt.hash(password, salt);
-
-  const user = new User({ name, email, password: passwordHash });
+const login = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ msg: "Preencha os dados corretamente" });
+  }
 
   try {
-    await user.save();
-    res.status(201).json({ msg: "Usuário criado com sucesso!" });
-  } catch (err) {
-    res.status(500).json({ msg: "Erro no servidor" });
+    const validatedData = UserDto.userLoginDTO.parse(req.body);
+    const result = await UserService.loginUser(validatedData);
+
+    res.status(200).json(result);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        message: "Erro de validação dos dados",
+        errors: error.errors,
+      });
+    }
+
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
   }
 };
 
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
-
-  const checkPassword = await bcrypt.compare(password, user.password);
-  if (!checkPassword) return res.status(422).json({ msg: "Senha inválida!" });
-
-  const secret = process.env.SECRET;
-  const token = jwt.sign({ id: user._id }, secret);
-
+const getUserById = async (req, res) => {
   try {
-    res
-      .status(200)
-      .json({ msg: "Autenticado com sucesso!", token, userId: user._id });
-  } catch (err) {
-    res.status(500).json({ msg: "Erro no servidor" });
+    const user = await UserService.getUserById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+    userDto = UserDto.userResponseDTO.parse(user);
+    res.status(200).json(userDto);
+  } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
   }
 };
 
-exports.getUserById = async (req, res) => {
-  const id = req.params.id;
-
-  const user = await User.findById(id, "-password");
-  if (!user) return res.status(404).json({ msg: "Usuário não encontrado!" });
-
-  res.status(200).json({ user });
-};
+module.exports = { register, login, getUserById };

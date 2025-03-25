@@ -4,6 +4,7 @@ const connectDB = require("./src/config/db.js");
 
 connectDB(); // Conectar ao banco de dados
 
+<<<<<<< HEAD
 const PORT = process.env.PORT || 5000; // Escolher a porta de ambiente ou uma porta padrão
 
 app.listen(PORT, () => {
@@ -11,3 +12,7 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+=======
+const port = process.env.PORT;
+app.listen(port, () => console.log("Servidor rodando"));
+>>>>>>> refatorando

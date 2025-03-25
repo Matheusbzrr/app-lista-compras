@@ -2,13 +2,18 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
+<<<<<<< HEAD
 const authRoutes = require("./src/routes/authRoutes");
+=======
+const authRoutes = require("./routes/authRoutes");
+const shopping = require("./routes/shoppingRoutes");
+>>>>>>> refatorando
 
 // CORS options
 const corsOptions = {
   origin: "https://front-gold-sigma.vercel.app",
   methods: "GET,POST,PUT,DELETE",
-  allowedHeaders: "Content-Type",
+  allowedHeaders: "Content-Type, Authorization",
 };
 
 // Aplicar o CORS antes de qualquer outra configuração
@@ -18,8 +23,6 @@ app.use(express.json());
 // Rotas
 app.use("/auth", authRoutes);
 
-app.get("/home", (req, res) => {
-  res.status(200).json({ msg: "Bem-vindo à API!" });
-});
+app.use("/shopping", shopping);
 
 module.exports = app;
