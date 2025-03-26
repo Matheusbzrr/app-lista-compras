@@ -6,7 +6,7 @@ const authRoutes = require("./src/routes/authRoutes");
 const shopping = require("./src/routes/shoppingRoutes");
 
 const corsOptions = {
-  origin: "front-gold-sigma.vercel.app",
+  origin: "https://front-gold-sigma.vercel.app",
   methods: "GET,POST,PUT,DELETE",
   allowedHeaders: "Content-Type, Authorization",
 };
