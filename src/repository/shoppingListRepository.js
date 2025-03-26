@@ -9,25 +9,54 @@ const create = async (data) => {
   return await shoppingList.save();
 };
 
-const updateItem = async (data) => {
-  // Atualizar o item dentro do array de `items`
+const updateList = async (data) => {
+  // Para atualizar um item existente
+  if (data.item.itemId) {
+    return await ShoppingList.findOneAndUpdate(
+      {
+        _id: data.listId,
+        "items._id": data.item.itemId,
+      },
+      {
+        $set: {
+          "items.$.nameItem": data.item.nameItem,
+          "items.$.amountItem": data.item.amountItem,
+          "items.$.measurementUnit": data.item.measurementUnit,
+        },
+      },
+      { new: true }
+    );
+  }
+
   return await ShoppingList.findByIdAndUpdate(
     data.listId,
     {
-      $set: {
-        "items.$[elem].nameItem": data.item.nameItem,
-        "items.$[elem].amountItem": data.item.amountItem,
-        "items.$[elem].measurementUnit": data.item.measurementUnit,
+      $push: {
+        items: {
+          nameItem: data.item.nameItem,
+          amountItem: data.item.amountItem,
+          measurementUnit: data.item.measurementUnit,
+        },
       },
     },
-    {
-      new: true,
-      arrayFilters: [{ "elem.itemId": data.itemId }],
-    }
-  ).exec();
+    { new: true }
+  );
 };
 
-const findByUserId = async (userId, offset, limit) => {
+// Adicionar função para remover item
+const removeItem = async (listId, itemId) => {
+  return await ShoppingList.findByIdAndUpdate(
+    listId,
+    {
+      $pull: {
+        items: { _id: new ObjectId(itemId) },
+      },
+    },
+    { new: true }
+  );
+};
+
+const findListsByUserId = async (userId, offset, limit) => {
   return await ShoppingList.find({ userId }).skip(offset).limit(limit).exec();
 };
 
@@ -49,9 +78,10 @@ const deleteItemFromList = async (listId, itemId) => {
 
 module.exports = {
   create,
-  findByUserId,
+  findListsByUserId,
   findList,
   deleteList,
   deleteItemFromList,
-  updateItem,
+  updateList,
+  removeItem,
 };

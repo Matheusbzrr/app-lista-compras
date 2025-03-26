@@ -31,14 +31,9 @@ const responseShoppingListDto = z.array(
 );
 
 const updateShoppingItemsDTO = z.object({
-  items: z.array(
-    z.object({
-      itemId: z.string(),
-      nameItem: z.string(),
-      amountItem: z.number(),
-      measurementUnit: z.string(),
-    })
-  ),
+  nameItem: z.string(),
+  amountItem: z.number(),
+  measurementUnit: z.string(),
 });
 
 // Exportando para usar no Controller ou Service

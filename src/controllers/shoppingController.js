@@ -57,20 +57,17 @@ const getAllShoppingListsByIdUser = async (req, res) => {
   }
 };
 
-const updateShoppingList = async (req, res) => {
+const updateListAndItemInShoppingList = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({ msg: "Preencha os dados corretamente" });
   }
   try {
-    const listId = req.params.id; // Pegando o id da lista de compras
-
-    // Valida os dados de entrada com DTO
-    const validatedData = ShoppingListDto.updateShoppingItemsDTO.parse(
-      req.body
-    );
+    const listId = req.params.id; // Pegando o id do item ou lista
+    const item = req.body
+    const data = { listId, item }; // como estou passando um dto como objeto, la no repositorio vou ter qeu acessar o validatedData
 
     // Chama o service para atualizar os itens
-    await ShoppingListService.updateList(listId, validatedData);
+    await ShoppingListService.updateItem(data);
 
     res.status(204).json();
   } catch (error) {
@@ -119,8 +116,8 @@ const deleteItemInListById = async (req, res) => {
   }
 
   try {
-    const listId = req.params.id; // Pegando o id da lista de compras
-    const { itemId } = req.body; // Pegando o id do item
+    const listId = req.params.id; 
+    const { itemId } = req.body; 
     await ShoppingListService.deleteItemInList(listId, itemId);
     res.status(204).send();
   } catch (error) {
@@ -141,7 +138,7 @@ const deleteItemInListById = async (req, res) => {
 module.exports = {
   createShoppingList,
   getAllShoppingListsByIdUser,
-  updateShoppingList,
+  updateListAndItemInShoppingList,
   deleteShoppingListByListId,
   deleteItemInListById,
 };

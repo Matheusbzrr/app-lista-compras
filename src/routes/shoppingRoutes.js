@@ -18,18 +18,18 @@ router.get(
 router.put(
   "/update/:id",
   checkToken,
-  shoppingListController.updateShoppingList
+  shoppingListController.updateListAndItemInShoppingList
 );
 router.delete(
   "/delete/:id",
   checkToken,
-  shoppingListController.deleteShoppingListByListId.bind(shoppingListController)
+  shoppingListController.deleteShoppingListByListId
 );
 
 router.delete(
   "/item/:id",
   checkToken,
-  shoppingListController.deleteItemInListById.bind(shoppingListController)
+  shoppingListController.deleteItemInListById
 );
 
 module.exports = router;

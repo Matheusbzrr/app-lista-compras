@@ -12,7 +12,7 @@ const getAllListByUserId = async (userId) => {
   const page = 0; // Página solicitada
   const limit = 10; // Limite de itens por página
   const offset = page * limit; // Calcula o offset baseado na página solicitada
-  const shoppingList = await ShoppingListRepository.findByUserId(
+  const shoppingList = await ShoppingListRepository.findListsByUserId(
     userId,
     offset,
     limit
@@ -47,16 +47,13 @@ const getShoppingListByIdList = async (idList) => {
   return allList;
 };
 
-const updateList = async (listId, data) => {
-  const list = await ShoppingListRepository.updateItem(
-    listId,
-    { $set: { items: data } },
-    { new: true }
-  );
-
+const updateItem = async (data) => {
+  const list = await ShoppingListRepository.updateList(data);
   if (!list) {
-    throw { status: 500, message: "Erro ao atualizar a Lista" };
+    throw { status: 404, message: "Item não encontrado" };
   }
+
+  return list;
 };
 
 const deleteShoppingList = async (userId, listId) => {
@@ -83,7 +80,7 @@ module.exports = {
   createShoppingList,
   getAllListByUserId,
   getShoppingListByIdList,
-  updateList,
+  updateItem,
   deleteShoppingList,
   deleteItemInList,
 };
