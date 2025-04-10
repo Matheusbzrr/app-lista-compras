@@ -19,7 +19,8 @@ O sistema é escalável e pronto para ser integrado com qualquer aplicação fro
 - **Express** – Framework minimalista para construção da API;
 - **MongoDB** – Banco de dados NoSQL;
 - **Mongoose** – ODM para MongoDB;
-- **Arquitetura MVC** – Separação de responsabilidades em Models, Controllers e Rotas;
+- **Arquitetura MVC** – Separação de responsabilidades;
+- **JWT** - Tokenrizando a aplicação;
 - **Dotenv** – Gerenciamento de variáveis de ambiente;
 - **Cors** – Habilitação de requisições entre diferentes domínios;
 - **PWA (Progressive Web App)** – Este repositório oferece a API para ser consumida por uma aplicação PWA no front-end.
@@ -45,8 +46,9 @@ npm install
 
 # Crie um arquivo .env com as variáveis:
 # Exemplo de conteúdo:
-# MONGO_URI=mongodb://localhost:27017/nome-do-banco
-# PORT=3000
+# SECRET= (sua chave secreta" 
+# MONGO_URI=mongodb://seulinkdobanco/nome-do-banco
+# PORT=(Sua porta)
 
 # Inicie o servidor
 npm start
