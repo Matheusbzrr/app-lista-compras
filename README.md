@@ -57,7 +57,7 @@ npm start
 ## 📁 Estrutura do Projeto, 
 ```
 src/
-├── config/        # Arquivos de configuração (ex: banco de dados, ambiente)
+├── config/        # Arquivos de configuração (ex: banco de dados)
 ├── controllers/   # Lógica das requisições HTTP
 ├── dtos/          # Objetos de Transferência de Dados
 ├── middlewares/   # Intermediários para tratamento de requisições
