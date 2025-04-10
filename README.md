@@ -52,3 +52,18 @@ npm install
 
 # Inicie o servidor
 npm start
+````
+
+("📁 Estrutura do Projeto", """```
+src/
+├── config/        # Arquivos de configuração (ex: banco de dados, ambiente)
+├── controllers/   # Lógica das requisições HTTP
+├── dtos/          # Objetos de Transferência de Dados
+├── middlewares/   # Intermediários para tratamento de requisições
+├── model/         # Modelos de dados do Mongoose
+├── repository/    # Acesso aos dados e regras de negócio
+├── routes/        # Definições das rotas da API
+├── services/      # Regras de negócio e funcionalidades principais
+```"""),
+
+    ("🌐 Consumo da API", """Essa API foi criada para ser consumida por um projeto de front-end (por exemplo, um **PWA**), onde a interface gráfica será responsável por interagir com os dados da API.""")
